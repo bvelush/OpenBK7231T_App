@@ -22,6 +22,7 @@ static int setting_timeRequiredUntilDeepSleep = 60;
 static int g_noChangeTimePassed = 0;
 static int g_initialStateSent = 0;
 static int g_emergencyTimeWithNoConnection = 0;
+static int g_TimeToConnect = 0;
 
 #define EMERGENCY_TIME_TO_SLEEP_WITHOUT_MQTT 60 * 5
 
@@ -72,8 +73,11 @@ void DoorDeepSleep_OnEverySecond() {
 		g_noChangeTimePassed = 0;
 		g_emergencyTimeWithNoConnection = 0;
 	} else if (Main_HasMQTTConnected() && Main_HasWiFiConnected()) { // executes every second when connection is established
-			
 			PublishQueuedItems(); // publish those items that were queued when device was offline
+			if (g_TimeToConnect > 0) {
+				MQTT_PublishMain_StringInt("ttc", g_TimeToConnect, OBK_PUBLISH_FLAG_FORCE_REMOVE_GET);
+				g_TimeToConnect = -1; //  publish it only once, first time when MQTT connection is established
+			}
 			for (i = 0; i < PLATFORM_GPIO_MAX; i++) {
 				if (g_cfg.pins.roles[i] == IOR_DoorSensorWithDeepSleep ||
 					g_cfg.pins.roles[i] == IOR_DoorSensorWithDeepSleep_NoPup ||
@@ -119,6 +123,7 @@ void DoorDeepSleep_OnEverySecond() {
 			}
 		}
 		g_emergencyTimeWithNoConnection++;
+		g_TimeToConnect++;
 		if (g_emergencyTimeWithNoConnection >= EMERGENCY_TIME_TO_SLEEP_WITHOUT_MQTT) {
 			g_bWantPinDeepSleep = true;
 		}

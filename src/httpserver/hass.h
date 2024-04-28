@@ -69,6 +69,8 @@ typedef enum {
 	HASS_RSSI,
 	/// @brief Time firmware is alive in secs
 	HASS_UPTIME,
+	/// @brief Time To Connect to MQTT
+	HASS_TTC,
 	/// @brief Firmware build info
 	HASS_BUILD,
 	/// @brief Wh, kWh

@@ -102,6 +102,9 @@ void hass_populate_unique_id(ENTITY_TYPE type, int index, char* uniq_id) {
 	case HASS_UPTIME:
 		sprintf(uniq_id, "%s_uptime", longDeviceName);
 		break;	
+	case HASS_TTC:
+		sprintf(uniq_id, "%s_ttc", longDeviceName);
+		break;	
 	case HASS_BUILD:
 		sprintf(uniq_id, "%s_build", longDeviceName);
 		break;		
@@ -286,6 +289,9 @@ HassDeviceInfo* hass_init_device_info(ENTITY_TYPE type, int index, const char* p
 			break;
 		case HASS_UPTIME:
 			sprintf(g_hassBuffer, "Uptime");
+			break;
+		case HASS_TTC:
+			sprintf(g_hassBuffer, "TTC");
 			break;
 		case HASS_BUILD:
 			sprintf(g_hassBuffer, "Build");
@@ -663,6 +669,12 @@ HassDeviceInfo* hass_init_sensor_device_info(ENTITY_TYPE type, int channel, int 
 		cJSON_AddStringToObject(info->root, "unit_of_meas", "s");
 		cJSON_AddStringToObject(info->root, "entity_category", "diagnostic");
 		cJSON_AddStringToObject(info->root, "stat_cla", "total_increasing");
+		break;
+	case HASS_TTC:
+		cJSON_AddStringToObject(info->root, "dev_cla", "duration");
+		cJSON_AddStringToObject(info->root, "stat_t", "~/ttc");
+		cJSON_AddStringToObject(info->root, "unit_of_meas", "s");
+		cJSON_AddStringToObject(info->root, "entity_category", "diagnostic");
 		break;
 	case HASS_BUILD:
 		cJSON_AddStringToObject(info->root, "stat_t", "~/build");
